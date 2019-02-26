@@ -3,6 +3,7 @@
 const httpServer = require('../app');
 const debug = require('debug')(`server:${__filename}`);
 const mongoose = require('mongoose')
+const os = require('os');
 
 /**
  * Get port from environment and store in Express.
@@ -71,7 +72,23 @@ function onError(error) {
 function onListening() {
   var addr = httpServer.address();
   var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+    ? addr
+    : addr.port;
+  debug('Listening on: ');
+  getAdresses().forEach((address)=>{
+    debug('\t'+address+':'+bind);
+  })  
+}
+
+function getAdresses() {    
+  const ifaces=os.networkInterfaces();
+  return Object.keys(ifaces).reduce((accumulator, interfaceName) => {
+    let foundAdresses = []
+    ifaces[interfaceName].forEach(interface => {
+      if (interface.family == 'IPv4' && interface.internal == false && accumulator.indexOf(interface.address) == -1) {
+        foundAdresses.push(interface.address)
+      }
+    });
+    return accumulator.concat(foundAdresses);
+  }, ["localhost"]);
 }
