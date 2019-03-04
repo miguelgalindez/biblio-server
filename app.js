@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const httpServer = require('http').Server(app)
+const morgan=require('morgan');
 const cors = require('cors')
 const environmentProperties = require('./config/env')
 const initMongo = require('./lib/mongo')
@@ -12,7 +13,7 @@ initMongo(environmentProperties)
 
 //app.use(cors())
 
-//app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
