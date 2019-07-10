@@ -1,25 +1,33 @@
 const mongoose = require('mongoose')
 const debug = require('debug')(`server:${__filename}`);
 
-const connectMongo = async environmentProperties => {
+const openConnection = async environmentProperties => {
     await mongoose.connect(environmentProperties.mongoDb.url, environmentProperties.mongoDb.options)
     debug('Mongoose connected')
 }
 
-module.exports = async (environmentProperties) => {    
+const closeConnection = async (msg, callback) => {
+    await mongoose.connection.close(function () {
+        debug('Mongoose disconnected through: ', msg)
+        callback()
+    })
+}
+
+module.exports.connect = async (environmentProperties) => {    
     try{
         /**
          * Compiling the mongoose schemas into models
          */
-        await require('./models')
+        require('./models')
         /**
          * Trying to connect to Mongo
          */
-        await connectMongo(environmentProperties).catch(error => debug(error))        
+        await openConnection(environmentProperties).catch(error => debug(error))        
 
     } catch(error){
         debug(error)
     }
+
     /**
     * Adding connection event handlers
     */
@@ -37,30 +45,17 @@ module.exports = async (environmentProperties) => {
 
     /**
     * Adding some application finishing event handlers
-    */
-    const shutdown = async (msg, callback) => {
-        await mongoose.connection.close(function () {
-            debug('Mongoose disconnected through: ', msg)
-            callback()
-        })
-    }
-
+    */    
     process.once('SIGUSR2', async () => {
-        await shutdown('Nodemon restart', function () {
-            process.kill(process.pid, 'SIGUSR2');
-        })
+        await closeConnection('Nodemon restart', () => process.kill(process.pid, 'SIGUSR2'))
     })
 
     process.on('SIGINT', async () => {
-        await shutdown('App termination', function () {
-            process.exit(0);
-        })
+        await closeConnection('App termination', () =>  process.exit(0))
     })
 
     process.on('SIGTERM', async () => {
-        await shutdown('Heroku app shutdown', function () {
-            process.exit(0);
-        })
+        await closeConnection('Heroku app shutdown', () => process.exit(0))
     })
 
     /**

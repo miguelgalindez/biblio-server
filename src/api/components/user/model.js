@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const bcrypt = require('bcrypt')
-const { createCustomError } = require('../../error-crafter')
+const { createCustomError } = require('../../../services/util/error-crafter')
 const debug = require('debug')(`server:${__filename}`)
 
 /**

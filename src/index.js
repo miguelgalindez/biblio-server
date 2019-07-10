@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const httpServer = require('../app');
+const httpServer = require('./api/server');
 const debug = require('debug')(`server:${__filename}`);
 const mongoose = require('mongoose')
 const os = require('os');

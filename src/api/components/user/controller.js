@@ -4,7 +4,8 @@ const validUsers = [
     'nmeneses',
     'oidorgonzalez',
     'mpalacios',
-    'ccxiomara'
+    'ccxiomara',
+    'asd'
 ]
 
 
@@ -23,6 +24,6 @@ exports.signIn = async (req, res) => {
                 isAuthenticated: validUsers.findIndex(element => element === username) >= 0 ? 1 : 0,
                 isAuthorized: 0
             })
-        }, 200, 'funky');
+        }, 300, 'funky');
     }
 }

@@ -3,13 +3,13 @@ const app = express();
 const httpServer = require('http').Server(app)
 const morgan=require('morgan');
 const cors = require('cors')
-const environmentProperties = require('./config/env')
-const initMongo = require('./lib/mongo')
-const usersRouter=require('./lib/api/routes/users')
+const environmentProperties = require('../config/env')
+const mongo = require('../services/mongo')
+
 /**
  * Trying to initialize mongo connection
  */
-initMongo(environmentProperties)
+mongo.connect(environmentProperties)
 
 //app.use(cors())
 
@@ -17,7 +17,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/users', usersRouter);
+// Setting routes
+require('./routes')(app)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
