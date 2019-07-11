@@ -15,6 +15,7 @@
     "express-session": "^1.15.6",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.3",
+    "ldapts": "^1.9.0",
     "mongoose": "^5.4.2",
     "morgan": "~1.9.0",
     "passport": "^0.4.0",

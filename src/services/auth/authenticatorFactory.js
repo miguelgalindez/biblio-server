@@ -1,5 +1,5 @@
-const UnicaucaAuthenticator = require('./providers/unicaucaAuthenticator')
-const SalleAuthenticator = require('./providers/salleAuthenticator')
+const LdapAuthenticator=require('./authenticators/ldapAuthenticator')
+const authProvidersConfig = require('../../config/env').auth.providers
 
 class AuthenticatorFactory {
     constructor() {
@@ -11,15 +11,13 @@ class AuthenticatorFactory {
     }
 
     async createAuthenticator(providerID) {
-        switch (providerID) {
-            case "unicauca":
-                return await new UnicaucaAuthenticator();
+        const providerConfig=authProvidersConfig[providerID]
+        switch(providerConfig.protocol){
+            case "ldap":
+                return await new LdapAuthenticator(providerConfig);
             
-            case "salle":
-                return await new SalleAuthenticator();
-
             default:
-                return null;
+                return null;        
         }
     }
 }
