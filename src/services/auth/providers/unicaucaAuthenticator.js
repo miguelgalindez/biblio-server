@@ -1,8 +1,9 @@
 const Authenticator = require('../authenticator')
 
 class UnicaucaAuthenticator extends Authenticator {
-    login(username, password) {
+
+    async login(username, password) {        
         return true;
-    }
+    };
 }
 module.exports = UnicaucaAuthenticator

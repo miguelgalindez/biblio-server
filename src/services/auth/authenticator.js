@@ -1,5 +1,6 @@
 class Authenticator {
-    login(username, password) { }
+
+    async login(username, password) { }
 }
 
 module.exports = Authenticator

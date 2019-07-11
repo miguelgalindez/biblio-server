@@ -1,29 +1,18 @@
-const validUsers = [
-    'miguelgalindez',
-    'wriascos',
-    'nmeneses',
-    'oidorgonzalez',
-    'mpalacios',
-    'ccxiomara',
-    'asd'
-]
-
+const AuthService = require('../../../services/auth')
+const authService = new AuthService()
+const debug = require('debug')(`api:${__filename}`);
 
 exports.signIn = async (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        res.status(400).json({
-            error: "Debes ingresar tu usuario y tu contraseña"
-        });
+    const { username, password, provider } = req.body;
+    if (username && password && provider) {
+        try {
+            const loggedIn = await authService.login(username, password, provider)
+            res.status(200).json({ loggedIn })
+        } catch (error) {
+            res.status(500).json({ error: "Your request couldn't be processed" })            
+            debug(error)
+        }
     } else {
-        // TODO: implement auth
-        await setTimeout(() => {
-            res.status(200).json({
-                username: "miguelgalindez",
-                email: "miguelgalindez@unicauca.edu.co",
-                isAuthenticated: validUsers.findIndex(element => element === username) >= 0 ? 1 : 0,
-                isAuthorized: 0
-            })
-        }, 300, 'funky');
+        res.status(400).json({ error: "Username, password and auth provider are required" });
     }
 }

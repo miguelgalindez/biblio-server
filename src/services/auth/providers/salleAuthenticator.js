@@ -1,7 +1,7 @@
 const Authenticator = require('../authenticator')
 
 class SalleAuthenticator extends Authenticator {
-    login(username, password) {
+    async login(username, password) {        
         return true;
     }
 }
