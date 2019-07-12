@@ -35,9 +35,9 @@ module.exports = {
                 url: 'ldaps://hera.unicauca.edu.co:636',
                 adminDN: 'cn=ReaderAD,dc=unicauca,dc=edu,dc=co',
                 adminPassword: 'LD1P_R3AD3r_D3V',
-                searchDN: 'dc=unicauca,dc=edu,dc=co',
-                searchScope: 'sub',                
-                searchFilter: `(uid={username})`,
+                baseDN: 'dc=unicauca,dc=edu,dc=co',
+                searchScope: 'sub',
+                searchFilterBuilder: username => `(uid=${username})`,
             }
         }
     }

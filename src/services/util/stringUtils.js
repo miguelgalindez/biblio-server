@@ -9,9 +9,9 @@ module.exports = {
      * Result:
      *      My firstname is Neo, my last name is Andersson   
      *
-     * @param {*} string
-     * @param {*} variablesObject
-     * @returns
+     * @param {String} string
+     * @param {Object} variablesObject
+     * @returns {String}
      */
     injectVariables: async (string, variablesObject) => {        
         return await string.replace(/{([^{]+)}/g, (ignore, key) => {
