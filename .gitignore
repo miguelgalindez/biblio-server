@@ -25,9 +25,9 @@ yarn-error.log*
 # Configuration
 
 .vscode/settings.json
-config/env.js
-config/mongo-setup/admin-creadentials.js
-config/mongo-setup/app-user-credentials.js
+env.js
+admin-creadentials.js
+app-user-credentials.js
 
 .directory
 package-lock.json
