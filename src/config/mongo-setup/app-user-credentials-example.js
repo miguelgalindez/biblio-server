@@ -1,2 +1,2 @@
-const username="posapp";
-const pwd=APP_USER_PASSWORD;
+const username=USERNAME_FOR_APP_ACCESS;
+const pwd=PASSWORD_FOR_APP_ACCESS;
