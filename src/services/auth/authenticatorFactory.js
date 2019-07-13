@@ -1,4 +1,5 @@
 const LdapAuthenticator = require('./authenticators/ldapAuthenticator')
+const DummyAuthenticator = require('./authenticators/dummyAuthenticator')
 const authProvidersConfig = require('../../config/env').auth.providers
 /**
  * Authenticators factory
@@ -13,15 +14,23 @@ class AuthenticatorFactory {
      */
 
     constructor() {
+        
+        // Implementing singleton pattern
         if (!AuthenticatorFactory.exists) {
             AuthenticatorFactory.instance = this;
             AuthenticatorFactory.exists = true;
         }
-
+        
+        // Getting the NODE_ENV and converting it to lower case to
+        // avoid case pitfalls when comparing
+        this.node_env = process.env.NODE_ENV
+        this.node_env = this.node_env ? this.node_env.toLowerCase() : null
+        
+        // Initializing authenticators pool
         this.authenticatorsPool = {}
         return AuthenticatorFactory.instance
     }
-    
+
     /**
      * Provides an authenticator that suits the provider given
      * as parameter. To do that, it checks if it already has an available
@@ -32,8 +41,8 @@ class AuthenticatorFactory {
      * @returns {Authenticator}
      * @memberof AuthenticatorFactory
      */
-    
-    async getAuthenticator(providerId) {        
+
+    async getAuthenticator(providerId) {
         if (!this.authenticatorsPool[providerId]) {
             this.authenticatorsPool[providerId] = await this.createAuthenticator(providerId)
         }
@@ -53,15 +62,22 @@ class AuthenticatorFactory {
 
     async createAuthenticator(providerId) {
         const providerConfig = authProvidersConfig[providerId]
-        if(providerConfig){
+        if (providerConfig) {
             switch (providerConfig.protocol) {
                 case "ldap":
                     return await new LdapAuthenticator(providerConfig);
 
+                case "dummy":
+                    if (this.node_env !== 'production') {
+                        return await new DummyAuthenticator();
+                    } else {
+                        throw new Error("Dummy auth protocol is not allowed on the production environment");
+                    }
+
                 default:
-                    throw new Error(`Not supported protocol: ${providerConfig.protocol} for provider: ${providerId}`);
+                    throw new Error(`Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`);
             }
-        }else{
+        } else {
             throw new Error(`Configuration not found for the auth provider: ${providerId}`)
         }
     }

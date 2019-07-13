@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const bcrypt = require('bcrypt')
-const { createCustomError } = require('../../../services/util/error-crafter')
 const debug = require('debug')(`server:${__filename}`)
 
 /**
@@ -114,10 +113,7 @@ UserSchema.statics.findOneByFilter = async function (filter, includeSensitivePro
         let user = await this.findOne(filter).select(includeSensitiveProperties ? stringToIncludeSensitiveProperties : undefined).lean()
         return await this.castUserID(user)
     } else {
-        throw await createCustomError({
-            name: "ValidationError",
-            message: "You must provide a filter for the query"
-        })
+        throw new Error("You must provide a filter for the query")
     }
 }
 
@@ -125,11 +121,7 @@ UserSchema.statics.findByEmail = async function (email, includeSensitiveProperti
     if (email) {
         return await this.findOneByFilter({ email }, includeSensitiveProperties)
     } else {
-        throw await createCustomError({
-            name: "ValidationError",
-            message: "You must provide an email",
-            errors: { email: { message: "You must provide an email" } }
-        })
+        throw new Error("You must provide an email")
     }
 }
 
@@ -137,11 +129,7 @@ UserSchema.statics.findByUsername = async function (username, includeSensitivePr
     if (username) {
         return await this.findOneByFilter({ username }, includeSensitiveProperties)
     } else {
-        throw await createCustomError({
-            name: "ValidationError",
-            message: "You must provide an username",
-            errors: { username: { message: "You must provide an username" } }
-        })
+        throw new Error("You must provide an username")
     }
 }
 
@@ -160,11 +148,7 @@ UserSchema.statics.findByUsernameOrEmail = async function (usernameOrEmail, incl
         return user
     }
     else {
-        throw await createCustomError({
-            name: "ValidationError",
-            message: "You must provide a valid username or email",
-            errors: { usernameOrEmail: { message: "You must provide a valid username or email" } }
-        })
+        throw new Error("You must provide a valid username or email")
     }
 }
 
@@ -214,11 +198,17 @@ UserSchema.statics.signUp = async function (user) {
             if (user.email && user.email === foundUser.email) {
                 errors.email = { message: "There is already a registered user with this email" }
             }
+
+            throw new Error("There is already a registered user with that username or email")
+
+            // FIXME: Create a new error reporting approach
+            /*
             throw await createCustomError({
                 name: "ValidationError",
                 message: "There is already a registered user with that username or email",
                 errors
             })
+            */
         }
     } else {
         let message, errors
@@ -228,11 +218,16 @@ UserSchema.statics.signUp = async function (user) {
             message = "You must provide a password"
             errors = { password: { message: "You must provide a password" } }
         }
+        throw new Error("Error when trying to sign up")
+
+        // FIXME: Create a new error reporting approach
+        /*
         throw await createCustomError({
             name: "ValidationError",
             message,
             errors
         })
+        */
     }
 }
 
@@ -257,11 +252,16 @@ UserSchema.statics.signIn = async function (usernameOrEmail, password) {
         if (!password) {
             errors.password = { message: "You must provide a password" }
         }
+        throw new Error("You must provide, at least, an username/email and a password")
+        
+        // FIXME: Create a new error reporting approach
+        /*
         throw await createCustomError({
             name: "ValidationError",
             message: "You must provide, at least, an username/email and a password",
             errors
         })
+        */
     }
 }
 

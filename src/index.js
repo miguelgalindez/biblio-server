@@ -75,20 +75,20 @@ function onListening() {
     ? addr
     : addr.port;
   debug('Listening on: ');
-  getAdresses().forEach((address)=>{
+  getAddresses().forEach((address)=>{
     debug('\t'+address+':'+bind);
   })  
 }
 
-function getAdresses() {    
+function getAddresses() {    
   const ifaces=os.networkInterfaces();
   return Object.keys(ifaces).reduce((accumulator, interfaceName) => {
-    let foundAdresses = []
+    let foundAddresses = []
     ifaces[interfaceName].forEach(interface => {
       if (interface.family == 'IPv4' && interface.internal == false && accumulator.indexOf(interface.address) == -1) {
-        foundAdresses.push(interface.address)
+        foundAddresses.push(interface.address)
       }
     });
-    return accumulator.concat(foundAdresses);
+    return accumulator.concat(foundAddresses);
   }, ["localhost"]);
 }
