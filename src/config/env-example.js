@@ -28,6 +28,13 @@ module.exports={
         }
     },
 
+    jwt: {
+        secret: JWT_SECRET,
+        signingOptions: {
+            expiresIn: '90d'
+        }
+    },
+
     auth: {
         providers: {
             myProviderA: {
