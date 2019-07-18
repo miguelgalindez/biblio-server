@@ -21,3 +21,16 @@ module.exports.createToken = async payload => {
 
     return token
 }
+
+module.exports.verifyToken = async token => {
+    const decoded = await new Promise((resolve, reject) => {
+        jwt.verify(token, jwtConfig.secret, {}, (err, decoded) => {
+            if (err)
+                reject(err)
+            else
+                resolve(decoded)
+        })
+    })
+    
+    return decoded
+}

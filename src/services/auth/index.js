@@ -20,14 +20,16 @@ const jwt = require('../jwt')
     *                   {String}    token
     */
 module.exports.login = async (username, password, providerId) => {
-    const authenticator = await authenticatorFactory.getAuthenticator(providerId)
-    if (authenticator) {
+    try {
+        const authenticator = await authenticatorFactory.authenticator(providerId)
         const loggedIn = await authenticator.login(username, password)
         let token
         if (loggedIn)
             token = await jwt.createToken({ username, providerId })
         return { loggedIn, token }
-    } else {
+    } catch (error) {
         throw new Error(`Couldn't get an authenticator instance for the provider: ${providerId}`)
     }
+
+
 }

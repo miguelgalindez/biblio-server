@@ -1,6 +1,8 @@
 const LdapAuthenticator = require('./authenticators/ldapAuthenticator')
 const DummyAuthenticator = require('./authenticators/dummyAuthenticator')
 const authProvidersConfig = require('../../config/env').auth.providers
+const CustomError = require('../util/customError')
+
 /**
  * Authenticators factory
  * @class AuthenticatorFactory
@@ -14,20 +16,22 @@ class AuthenticatorFactory {
      */
 
     constructor() {
-        
+
         // Implementing singleton pattern
         if (!AuthenticatorFactory.exists) {
             AuthenticatorFactory.instance = this;
             AuthenticatorFactory.exists = true;
         }
-        
+
         // Getting the NODE_ENV and converting it to lower case to
         // avoid case pitfalls when comparing
         this.node_env = process.env.NODE_ENV
         this.node_env = this.node_env ? this.node_env.toLowerCase() : null
-        
         // Initializing authenticators pool
         this.authenticatorsPool = {}
+        // Setting error's name
+        this.errorName = `${this.constructor.name}Error`
+
         return AuthenticatorFactory.instance
     }
 
@@ -71,15 +75,23 @@ class AuthenticatorFactory {
                     if (this.node_env !== 'production') {
                         return await new DummyAuthenticator();
                     } else {
-                        throw new Error("Dummy auth protocol is not allowed on the production environment");
+                        throw new CustomError(this.errorName, "Dummy auth protocol is not allowed on the production environment", 501);
                     }
 
                 default:
-                    throw new Error(`Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`);
+                    throw new CustomError(this.errorName, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501);
             }
         } else {
-            throw new Error(`Configuration not found for the auth provider: ${providerId}`)
+            throw new CustomError(this.errorName, `Configuration not found for the auth provider: ${providerId}`, 501)
         }
+    }
+
+    get errorName() {
+        return this._errorName
+    }
+
+    set errorName(value) {
+        this._errorName = value
     }
 }
 
