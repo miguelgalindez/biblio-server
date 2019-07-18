@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const httpServer = require('./api/server');
-const debug = require('debug')(`server:${__filename}`);
+const logger = require('./services/util/logger')
 const mongoose = require('mongoose')
 const os = require('os');
 
@@ -74,14 +74,13 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? addr
     : addr.port;
-  debug('Listening on: ');
-  getAddresses().forEach((address)=>{
-    debug('\t'+address+':'+bind);
-  })  
+  const addresses = getAddresses().join(bind + "\n\t\t\t\t\t")
+
+  logger.info(`Listening on: ${addresses}`);
 }
 
-function getAddresses() {    
-  const ifaces=os.networkInterfaces();
+function getAddresses() {
+  const ifaces = os.networkInterfaces();
   return Object.keys(ifaces).reduce((accumulator, interfaceName) => {
     let foundAddresses = []
     ifaces[interfaceName].forEach(interface => {

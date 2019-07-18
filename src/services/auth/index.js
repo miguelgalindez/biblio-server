@@ -4,6 +4,7 @@
 const AuthenticatorFactory = require('./authenticatorFactory')
 const authenticatorFactory = new AuthenticatorFactory()
 const jwt = require('../jwt')
+const CustomError = require('../util/customError')
 
 
 
@@ -21,15 +22,19 @@ const jwt = require('../jwt')
     */
 module.exports.login = async (username, password, providerId) => {
     try {
-        const authenticator = await authenticatorFactory.authenticator(providerId)
+        const authenticator = await authenticatorFactory.getAuthenticator(providerId)
         const loggedIn = await authenticator.login(username, password)
         let token
         if (loggedIn)
             token = await jwt.createToken({ username, providerId })
         return { loggedIn, token }
     } catch (error) {
-        throw new Error(`Couldn't get an authenticator instance for the provider: ${providerId}`)
+        if (error.thrower === AuthenticatorFactory.name)
+            throw new CustomError('AuthService', `Not supported authentication for the provider ${providerId}`, 501)
+        else
+            throw error
     }
+
 
 
 }

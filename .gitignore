@@ -31,3 +31,5 @@ app-user-credentials.js
 
 .directory
 package-lock.json
+
+log/

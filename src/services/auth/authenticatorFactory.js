@@ -29,8 +29,6 @@ class AuthenticatorFactory {
         this.node_env = this.node_env ? this.node_env.toLowerCase() : null
         // Initializing authenticators pool
         this.authenticatorsPool = {}
-        // Setting error's name
-        this.errorName = `${this.constructor.name}Error`
 
         return AuthenticatorFactory.instance
     }
@@ -75,23 +73,15 @@ class AuthenticatorFactory {
                     if (this.node_env !== 'production') {
                         return await new DummyAuthenticator();
                     } else {
-                        throw new CustomError(this.errorName, "Dummy auth protocol is not allowed on the production environment", 501);
+                        throw await new CustomError(this.constructor.name, "Dummy auth protocol is not allowed on the production environment", 501, true);
                     }
 
                 default:
-                    throw new CustomError(this.errorName, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501);
+                    throw await new CustomError(this.constructor.name, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501, true);
             }
         } else {
-            throw new CustomError(this.errorName, `Configuration not found for the auth provider: ${providerId}`, 501)
+            throw await new CustomError(this.constructor.name, `Configuration not found for the auth provider: ${providerId}`, 501, true)
         }
-    }
-
-    get errorName() {
-        return this._errorName
-    }
-
-    set errorName(value) {
-        this._errorName = value
     }
 }
 

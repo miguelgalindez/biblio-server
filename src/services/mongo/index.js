@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
-const debug = require('debug')(`server:${__filename}`);
+const logger=require('../util/logger')
 
 const openConnection = async environmentProperties => {
     await mongoose.connect(environmentProperties.mongoDb.url, environmentProperties.mongoDb.options)
-    debug('Mongoose connected')
+    logger.info('Mongoose connected')
 }
 
 const closeConnection = async (msg, callback) => {
     await mongoose.connection.close(function () {
-        debug('Mongoose disconnected through: ', msg)
+        logger.info('Mongoose disconnected through: ', msg)
         callback()
     })
 }
@@ -19,28 +19,29 @@ module.exports.connect = async (environmentProperties) => {
          * Compiling the mongoose schemas into models
          */
         require('./models')
+                
         /**
          * Trying to connect to Mongo
          */
-        await openConnection(environmentProperties).catch(error => debug(error))        
+        await openConnection(environmentProperties).catch(error => logger.info(error))        
 
     } catch(error){
-        debug(error)
+        logger.info(error)
     }
 
     /**
     * Adding connection event handlers
     */
     mongoose.connection.on('reconnected', function () {
-        debug('Mongoose reconnected')
+        logger.info('Mongoose reconnected')
     })
 
     mongoose.connection.on('error', function (err) {
-        debug('Mongoose connection error ', err)
+        logger.info('Mongoose connection error ', err)
     })
 
     mongoose.connection.on('disconnected', function () {
-        debug('Mongoose disconnected')
+        logger.info('Mongoose disconnected')
     })
 
     /**

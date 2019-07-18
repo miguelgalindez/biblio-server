@@ -1,8 +1,12 @@
+const logger = require('../util/logger')
 class CustomError extends Error {
-    constructor(name, message, status) {
+    constructor(thrower, message, status, logMessage = false) {
         super(message)
-        this.name = name
+        this.thrower = thrower
+        this.name = `${thrower}Error`
         this.status = status
+        if(logMessage)
+            logger.warn(`[${this.thrower}] ${message}`)
     }
 
     set status(value) {
@@ -11,6 +15,14 @@ class CustomError extends Error {
 
     get status() {
         return this._status
+    }
+
+    set thrower(value) {
+        this._thrower = value
+    }
+
+    get thrower() {
+        return this._thrower
     }
 }
 

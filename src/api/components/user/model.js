@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const bcrypt = require('bcrypt')
-const debug = require('debug')(`server:${__filename}`)
+const logger = require('../../../services/util/logger')
 
 /**
  * TODO: Find out how to make unique constraint work properly
@@ -169,7 +169,7 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.statics.signWithOAuth = async function (user) {
     if (user) {
-        debug("Creating new user who accessed through OAuth")
+        logger.info("Creating new user who accessed through OAuth")
         user = await this.findOneAndUpdate(
             { email: user.email },
             { ...user },
@@ -185,7 +185,7 @@ UserSchema.statics.signUp = async function (user) {
     if (user && user.password) {
         const foundUser = await this.findByUsernameOrEmail(user.username) || await this.findByUsernameOrEmail(user.email)
         if (!foundUser) {
-            debug("New user trying to sign up")
+            logger.info("New user trying to sign up")
             user = await this.create(user)
             user = user.toObject({ flattenMaps: true, versionKey: false })
             return await this.removeSensitiveProperties(user)
@@ -235,7 +235,7 @@ UserSchema.statics.signIn = async function (usernameOrEmail, password) {
     if (usernameOrEmail && password) {
         let user = await this.findByUsernameOrEmail(usernameOrEmail, true)
         if (user) {
-            debug("Trying to authenticate an user against their password")
+            logger.info("Trying to authenticate an user against their password")
             const match = await bcrypt.compare(password, user.password)
             return match ? this.removeSensitiveProperties(user) : null
         }
@@ -253,7 +253,7 @@ UserSchema.statics.signIn = async function (usernameOrEmail, password) {
             errors.password = { message: "You must provide a password" }
         }
         throw new Error("You must provide, at least, an username/email and a password")
-        
+
         // FIXME: Create a new error reporting approach
         /*
         throw await createCustomError({
@@ -266,4 +266,4 @@ UserSchema.statics.signIn = async function (usernameOrEmail, password) {
 }
 
 mongoose.model('User', UserSchema)
-debug('User model compiled')
+logger.info('User model compiled')
