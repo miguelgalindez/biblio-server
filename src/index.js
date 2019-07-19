@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-const path=require('path')
-process.env.projectRootDirectory=path.resolve(__dirname.split('/src')[0])
+process.env.projectRootDirectory = __dirname.split('/src')[0]
 
 const httpServer = require('./api/server');
 const logger = require('./services/util/logger')
@@ -55,11 +54,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      logger.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      logger.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -71,7 +70,7 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+async function onListening() {
   const addresses = getAddresses().join("\n\t\t\t\t\t")
   logger.info(`Listening on: ${addresses}`);
 }

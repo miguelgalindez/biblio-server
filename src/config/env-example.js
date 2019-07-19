@@ -15,6 +15,11 @@ module.exports={
         callbackURL: "http://localhost:9308/auth/google/callback"
     },
     expressSessionSecret: YOUR_SECRET,
+
+    morgan: {
+        formatForDevelopment: ':method :url - :status - :response-time ms - HTTP/:http-version - :res[content-length] B',
+        formatForProduction: ':method :url - :status - :response-time ms - HTTP/:http-version - :res[content-length] B - :remote-addr :remote-user :user-agent',
+    },
     
     mongoDb: {
         url: "mongodb://posapp:password@localhost:27017/posapp",

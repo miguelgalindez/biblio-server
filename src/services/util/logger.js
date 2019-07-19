@@ -14,6 +14,7 @@ if (!fs.existsSync(logDir)) {
 
 const logger = createLogger({
     level: env === 'production' ? 'info' : 'debug',
+    exitOnError: false,
     format: format.combine(
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
     ),
@@ -22,22 +23,28 @@ const logger = createLogger({
             format: format.combine(
                 format.colorize(),
                 format.printf(info => `${info.timestamp} ${info.level} ${info.message}`)
-            )
+            ),
+            handleExceptions: true,
+            level: 'silly'
         }),
         new DailyRotateFile({
             dirname: logDir,
             filename: 'log.%DATE%.txt',
-            format: format.printf(info => `${info.timestamp} ${info.level} ${info.message}`)
+            format: format.printf(info => `${info.timestamp} ${info.level} ${info.message}`),
+            handleExceptions: true,
+            level: 'info'
         })
     ]
 })
 
 module.exports = logger
+
 module.exports.stream = {
-    write(message, enconding) {
+    async write(message, enconding) {
         logger.info(message)
     }
 }
+
 module.exports.loggingLevels = new Enum({
     error: 'error',
     warn: 'warn',
