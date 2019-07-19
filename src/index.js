@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+const path=require('path')
+process.env.projectRootDirectory=path.resolve(__dirname.split('/src')[0])
 
 const httpServer = require('./api/server');
 const logger = require('./services/util/logger')
@@ -70,24 +72,20 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = httpServer.address();
-  var bind = typeof addr === 'string'
-    ? addr
-    : addr.port;
-  const addresses = getAddresses().join(bind + "\n\t\t\t\t\t")
-
+  const addresses = getAddresses().join("\n\t\t\t\t\t")
   logger.info(`Listening on: ${addresses}`);
 }
 
 function getAddresses() {
+  const port = httpServer.address().port;
   const ifaces = os.networkInterfaces();
   return Object.keys(ifaces).reduce((accumulator, interfaceName) => {
     let foundAddresses = []
     ifaces[interfaceName].forEach(interface => {
       if (interface.family == 'IPv4' && interface.internal == false && accumulator.indexOf(interface.address) == -1) {
-        foundAddresses.push(interface.address)
+        foundAddresses.push(`${interface.address}:${port}`)
       }
     });
     return accumulator.concat(foundAddresses);
-  }, ["localhost"]);
+  }, []);
 }

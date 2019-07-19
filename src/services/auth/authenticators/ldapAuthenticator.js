@@ -9,8 +9,9 @@ const { Client } = require('ldapts')
  */
 
 class LdapAuthenticator extends Authenticator {
-    
+
     /**
+     * Async constructor
      * Creates an instance of LdapAuthenticator.
      * @param {Object} config Defines the configuration attributes needed to set up this kind of authenticator. 
      *                        It must contain the following properties:
@@ -25,8 +26,11 @@ class LdapAuthenticator extends Authenticator {
      */
 
     constructor(config) {
-        super(config)
-        this.client = new Client({ url: this.config.url })
+        return (async () => {
+            super(config)
+            this.client = await new Client({ url: this.config.url })
+            return this
+        })()
     }
 
     /**

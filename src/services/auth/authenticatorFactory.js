@@ -11,24 +11,24 @@ const CustomError = require('../util/customError')
 class AuthenticatorFactory {
 
     /**
-     * Creates a Singleton instance of AuthenticatorFactory.
+     * Async constructor who Creates a Singleton 
+     * instance of AuthenticatorFactory.
      * @memberof AuthenticatorFactory
      */
 
     constructor() {
-
         // Implementing singleton pattern
         if (!AuthenticatorFactory.exists) {
             AuthenticatorFactory.instance = this;
             AuthenticatorFactory.exists = true;
-        }
 
-        // Getting the NODE_ENV and converting it to lower case to
-        // avoid case pitfalls when comparing
-        this.node_env = process.env.NODE_ENV
-        this.node_env = this.node_env ? this.node_env.toLowerCase() : null
-        // Initializing authenticators pool
-        this.authenticatorsPool = {}
+            // Getting the NODE_ENV and converting it to lower case to
+            // avoid case pitfalls when comparing
+            this.node_env = process.env.NODE_ENV
+            this.node_env = this.node_env ? this.node_env.toLowerCase() : null
+            // Initializing authenticators pool
+            this.authenticatorsPool = {}
+        }
 
         return AuthenticatorFactory.instance
     }
@@ -73,14 +73,14 @@ class AuthenticatorFactory {
                     if (this.node_env !== 'production') {
                         return await new DummyAuthenticator();
                     } else {
-                        throw await new CustomError(this.constructor.name, "Dummy auth protocol is not allowed on the production environment", 501, true);
+                        throw await new CustomError(this.constructor.name, "Dummy auth protocol is not allowed on the production environment", 501);
                     }
 
                 default:
-                    throw await new CustomError(this.constructor.name, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501, true);
+                    throw await new CustomError(this.constructor.name, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501);
             }
         } else {
-            throw await new CustomError(this.constructor.name, `Configuration not found for the auth provider: ${providerId}`, 501, true)
+            throw await new CustomError(this.constructor.name, `Configuration not found for the auth provider: ${providerId}`, 501)
         }
     }
 }

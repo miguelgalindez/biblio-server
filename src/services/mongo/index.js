@@ -8,7 +8,7 @@ const openConnection = async environmentProperties => {
 
 const closeConnection = async (msg, callback) => {
     await mongoose.connection.close(function () {
-        logger.info('Mongoose disconnected through: ', msg)
+        logger.info(`Mongoose disconnected through: ${msg}`)
         callback()
     })
 }
@@ -23,10 +23,10 @@ module.exports.connect = async (environmentProperties) => {
         /**
          * Trying to connect to Mongo
          */
-        await openConnection(environmentProperties).catch(error => logger.info(error))        
+        await openConnection(environmentProperties).catch(error => logger.error(error))        
 
     } catch(error){
-        logger.info(error)
+        logger.error(error)
     }
 
     /**
@@ -37,11 +37,11 @@ module.exports.connect = async (environmentProperties) => {
     })
 
     mongoose.connection.on('error', function (err) {
-        logger.info('Mongoose connection error ', err)
+        logger.error(`Mongoose connection error ${err}`)
     })
 
     mongoose.connection.on('disconnected', function () {
-        logger.info('Mongoose disconnected')
+        logger.warn('Mongoose disconnected')
     })
 
     /**

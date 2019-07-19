@@ -30,7 +30,7 @@ module.exports.login = async (username, password, providerId) => {
         return { loggedIn, token }
     } catch (error) {
         if (error.thrower === AuthenticatorFactory.name)
-            throw new CustomError('AuthService', `Not supported authentication for the provider ${providerId}`, 501)
+            throw await new CustomError('AuthService', `Not supported authentication for the provider ${providerId}`, 501, null)
         else
             throw error
     }

@@ -47,7 +47,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status).json({ error: err.message })
   else {
     logger.error(err.stack)
-    res.status(500).json({error: "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" })
   }
 
 });

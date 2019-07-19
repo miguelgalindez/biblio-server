@@ -10,7 +10,7 @@ const { jwt: jwtConfig } = require('../../config/env')
  * @returns {String} JWT token
  */
 module.exports.createToken = async payload => {
-    const token = await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         jwt.sign(payload, jwtConfig.secret, jwtConfig.signingOptions, (err, token) => {
             if (err)
                 reject(err)
@@ -18,12 +18,10 @@ module.exports.createToken = async payload => {
                 resolve(token)
         })
     })
-
-    return token
 }
 
 module.exports.verifyToken = async token => {
-    const decoded = await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         jwt.verify(token, jwtConfig.secret, {}, (err, decoded) => {
             if (err)
                 reject(err)
@@ -31,6 +29,4 @@ module.exports.verifyToken = async token => {
                 resolve(decoded)
         })
     })
-    
-    return decoded
 }
