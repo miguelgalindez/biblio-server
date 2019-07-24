@@ -19,15 +19,13 @@ class AuthenticatorFactory {
     constructor() {
         // Implementing singleton pattern
         if (!AuthenticatorFactory.exists) {
-            AuthenticatorFactory.instance = this;
-            AuthenticatorFactory.exists = true;
-
-            // Getting the NODE_ENV and converting it to lower case to
-            // avoid case pitfalls when comparing
-            this.node_env = process.env.NODE_ENV
-            this.node_env = this.node_env ? this.node_env.toLowerCase() : null
+            // Getting the environment the app is running on
+            this.nodeEnv = process.env.NODE_ENV
             // Initializing authenticators pool
             this.authenticatorsPool = {}
+
+            AuthenticatorFactory.instance = this
+            AuthenticatorFactory.exists = true
         }
 
         return AuthenticatorFactory.instance
@@ -70,7 +68,7 @@ class AuthenticatorFactory {
                     return await new LdapAuthenticator(providerConfig);
 
                 case "dummy":
-                    if (this.node_env !== 'production') {
+                    if (this.nodeEnv !== 'production') {
                         return await new DummyAuthenticator();
                     } else {
                         throw await new CustomError(this.constructor.name, "Dummy auth protocol is not allowed on the production environment", 501);

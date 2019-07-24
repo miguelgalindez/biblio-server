@@ -9,18 +9,18 @@ class CustomError extends Error {
      * @param {String} thrower
      * @param {String} message
      * @param {Integer} status
-     * @param {String} [logLevel=logger.loggingLevels.warn] The message of this error will be, automatically, logged with the level defined by this variable.
+     * @param {String} [logLevel=logger.levels.warn] The message of this error will be, automatically, logged with the level defined by this variable.
      *                                                      If not provided, 'warn' will be the default level, but if 'null', 'undefined' or an  invalid value 
      *                                                      is provided, then the message won't be logged !!!
      * @memberof CustomError
      */
-    constructor(thrower, message, status, logLevel = logger.loggingLevels.warn) {
+    constructor(thrower, message, status, logLevel = logger.levels.warn) {
         return (async () => {
             super(message)
             this.thrower = thrower
             this.name = `${thrower}Error`
             this.status = status
-            if (logLevel && logger.loggingLevels.has(logLevel)) {
+            if (logLevel && logger.levels.has(logLevel)) {
                 const throwPoint = await this.getThrowPoint()
                 await logger[logLevel](`[${throwPoint}] ${this.message}`)
             }
@@ -58,4 +58,3 @@ class CustomError extends Error {
 }
 
 module.exports = CustomError
-module.exports.loggingLevels = logger.loggingLevels

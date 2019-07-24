@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 process.env.projectRootDirectory = __dirname.split('/src')[0]
+process.env.NODE_ENV = (process.env.NODE_ENV || 'development').toLowerCase()
 
-const httpServer = require('./api/server');
+const apiServer = require('./api/server');
 const logger = require('./services/util/logger')
 const mongoose = require('mongoose')
 const os = require('os');
@@ -13,11 +14,11 @@ const os = require('os');
 const port = normalizePort(process.env.PORT || '9308');
 
 mongoose.connection.once('open', () => {
-  httpServer.listen(port);
+  apiServer.listen(port);
 })
 
-httpServer.on('error', onError);
-httpServer.on('listening', onListening);
+apiServer.on('error', onError);
+apiServer.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -76,7 +77,7 @@ async function onListening() {
 }
 
 function getAddresses() {
-  const port = httpServer.address().port;
+  const port = apiServer.address().port;
   const ifaces = os.networkInterfaces();
   return Object.keys(ifaces).reduce((accumulator, interfaceName) => {
     let foundAddresses = []

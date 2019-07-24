@@ -1,15 +1,14 @@
-let env = process.env.NODE_ENV || 'development'
-env = env.toLowerCase();
+const nodeEnv = process.env.NODE_ENV
+const environmentProperties = require('../config/env')
 
 const express = require('express');
 const app = express();
 const httpServer = require('http').Server(app)
 const cors = require('cors')
-const environmentProperties = require('../config/env')
-const mongo = require('../services/mongo')
 const logger = require('../services/util/logger')
 const morgan = require('morgan');
-const morganFormat = env === 'development' ? environmentProperties.morgan.formatForDevelopment : environmentProperties.morgan.formatForProduction
+const morganFormat = nodeEnv === 'development' ? environmentProperties.morgan.formatForDevelopment : environmentProperties.morgan.formatForProduction
+const mongo = require('../services/mongo')
 
 app.use(morgan(morganFormat, { stream: logger.stream }));
 
@@ -38,7 +37,7 @@ app.use(function (req, res, next) {
 app.use(async (err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = env === 'development' ? err : {};
+  res.locals.error = nodeEnv === 'development' ? err : {};
 
 
   if (err.status)
