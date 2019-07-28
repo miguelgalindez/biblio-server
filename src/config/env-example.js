@@ -60,7 +60,7 @@ module.exports={
                 searchScope: SEARCH_SCOPE,
                 
                 /**
-                 * Function that builds the search filter based on the provider's
+                 * Function that builds the search filter based on the company
                  * LDAP directory structure. For example: username => `(uid=${username})`                 
                  * @returns {String}
                  */

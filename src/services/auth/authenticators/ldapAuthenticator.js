@@ -20,7 +20,7 @@ class LdapAuthenticator extends Authenticator {
      *                              adminPassword {String} Password for the privileged LDAP user
      *                              baseDN {String} Distinguished name used as the base for searching
      *                              searchScope {String} Indicates the set of entries at or below the baseDN that may be considered potential matches for a search request. 'sub' is the most frequent value 
-     *                              searchFilterBuilder {Function} Function that builds and returns the search filter {String} based on the provider's LDAP directory structure. For example: username => `(uid=${username})`
+     *                              searchFilterBuilder {Function} Function that builds and returns the search filter {String} based on the company's LDAP directory structure. For example: username => `(uid=${username})`
      * 
      * @memberof LdapAuthenticator
      */

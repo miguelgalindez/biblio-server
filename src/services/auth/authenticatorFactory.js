@@ -32,40 +32,40 @@ class AuthenticatorFactory {
     }
 
     /**
-     * Provides an authenticator that suits the provider given
+     * Provides an authenticator that suits the company given
      * as parameter. To do that, it checks if it already has an available
-     * authenticator in the pool for that provider, if so, it returns it, 
+     * authenticator in the pool for that company, if so, it returns it, 
      * otherwise it will create a new one, store it in the pool and return it.
      *
-     * @param {String} providerId
+     * @param {String} company
      * @returns {Authenticator}
      * @memberof AuthenticatorFactory
      */
 
-    async getAuthenticator(providerId) {
-        if (!this.authenticatorsPool[providerId]) {
-            this.authenticatorsPool[providerId] = await this.createAuthenticator(providerId)
+    async getAuthenticator(company) {
+        if (!this.authenticatorsPool[company]) {
+            this.authenticatorsPool[company] = await this.createAuthenticator(company)
         }
-        return this.authenticatorsPool[providerId]
+        return this.authenticatorsPool[company]
     }
 
     /**
-     * Creates an authenticator based on the given auth provider's configuration. 
+     * Creates an authenticator based on the given auth company configuration. 
      * To do that, this method creates a new instance of the base 
      * class {Authenticator} implementation that suits the protocol defined in the 
      * configuration received as parameter.
      *
-     * @param {String} providerId Auth provider's identifier.
+     * @param {String} company Company identifier the authenticator is going to be created for.
      * @returns {Authenticator} 
      * @memberof AuthenticatorFactory
      */
 
-    async createAuthenticator(providerId) {
-        const providerConfig = authProvidersConfig[providerId]
-        if (providerConfig) {
-            switch (providerConfig.protocol) {
+    async createAuthenticator(company) {
+        const companyConfig = authProvidersConfig[company]
+        if (companyConfig) {
+            switch (companyConfig.protocol) {
                 case "ldap":
-                    return await new LdapAuthenticator(providerConfig);
+                    return await new LdapAuthenticator(companyConfig);
 
                 case "dummy":
                     if (this.nodeEnv !== 'production') {
@@ -75,12 +75,12 @@ class AuthenticatorFactory {
                     }
 
                 default:
-                    throw await new CustomError(this.constructor.name, `Not supported protocol: ${providerConfig.protocol} for the auth provider: ${providerId}`, 501);
+                    throw await new CustomError(this.constructor.name, `Not supported protocol: ${companyConfig.protocol} for the auth company: ${company}`, 501);
             }
         } else {
-            throw await new CustomError(this.constructor.name, `Configuration not found for the auth provider: ${providerId}`, 501)
+            throw await new CustomError(this.constructor.name, `Configuration not found for the auth company: ${company}`, 501)
         }
     }
 }
 
-module.exports = AuthenticatorFactory
+module.exports = new AuthenticatorFactory()

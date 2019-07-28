@@ -7,8 +7,8 @@ const { winston: winstonConfig } = require('../../config/env')
 
 
 /**
- * Singleton class that creates a single logging
- * provider instance for the entire app
+ * Singleton class that creates a single instance of
+ * the logging provider for the entire app
  *
  * @class Logger
  */
